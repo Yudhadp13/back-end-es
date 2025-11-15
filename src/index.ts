@@ -5,7 +5,7 @@ import cors from "cors";
 import router from "./routes/api";
 
 import db from "./utils/database";
-// import docs from "./docs/route";
+import docs from "./docs/route";
 import errorMiddleware from "./middlewares/error.middleware";
 
 async function init() {
@@ -28,7 +28,7 @@ async function init() {
     });
 
     app.use("/api", router);
-    // docs(app);
+    docs(app);
 
     app.use(errorMiddleware.serverRoute());
     app.use(errorMiddleware.serverError());
