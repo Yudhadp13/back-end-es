@@ -25,8 +25,8 @@ const doc = {
     },
     schemas: {
       LoginRequest: {
-        identifier: "yudha2025",
-        password: "Yudha2025!",
+        identifier: "dwiarza0",
+        password: "Dwiarza0!",
       },
       RegisterRequest: {
         fullName: "member2025",
@@ -52,20 +52,19 @@ const doc = {
         description: "",
         icon: "",
       },
-      CreateEventRequest: {
+      CreateSpecificationRequest: {
         name: "",
+        description: "",
+      },
+      CreateMaterialRequest: {
+        name: "",
+        description: "",
         banner: "fileUrl",
         category: "category ObjectID",
-        description: "",
-        startDate: "yyyy-mm-dd hh:mm:ss",
-        endDate: "yyyy-mm-dd hh:mm:ss",
-        location: {
-          region: 3273,
-          coordinates: [0, 0],
-          address: "",
-        },
-        isOnline: false,
-        isFeatured: false,
+        characteristics: [
+          "691dd69c995f75fa119432ba",
+          "691dfae7ea29058ce9b8a226",
+        ],
         isPublish: false,
       },
       RemoveMediaRequest: {
@@ -77,12 +76,12 @@ const doc = {
           "https://res.cloudinary.com/five-code/image/upload/v1734918925/f70vpihmblj8lvdmdcrs.png",
         isShow: false,
       },
-      CreateTicketRequest: {
-        price: 1500,
-        name: "Ticket Reguler",
-        events: "6762aa5dacb76a9b3e2cb1da",
-        description: "Ticket Reguler - Description",
-        quantity: 100,
+      CreatePlatformRequest: {
+        name: "Material A Platform",
+        description: "Material A Platform - Description",
+        url: "Link Url Platform",
+        icon: "",
+        materials: "materialObjectId",
       },
       CreateOrderRequest: {
         events: "event object id",
