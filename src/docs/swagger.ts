@@ -62,8 +62,8 @@ const doc = {
         banner: "fileUrl",
         category: "category ObjectID",
         characteristics: [
-          "691dd69c995f75fa119432ba",
-          "691dfae7ea29058ce9b8a226",
+          "specificationObjectId",
+          "specificationObjectId",
         ],
         isPublish: false,
       },
@@ -83,10 +83,44 @@ const doc = {
         icon: "",
         materials: "materialObjectId",
       },
-      CreateOrderRequest: {
-        events: "event object id",
-        ticket: "ticket object id",
-        quantity: 1,
+      CreateRuleRequest: {
+        name: "A02",
+        conditions: [
+          "specificationObjectId",
+          "specificationObjectId",
+          "specificationObjectId"
+        ],
+        result: "materialObjectId"
+      },
+      CreateQuestionRequest: {
+        code: "Q01",
+        questionText: "Apa kebutuhan cetak Anda?",
+        options: [
+          {
+            label: "Stiker",
+            value: "stiker",
+            specification: "specificationObjectId",
+            nextQuestion: "nextQuestionObjectId"
+          },
+          {
+            label: "Kartu Ucapan / Hangtag",
+            value: "S02",
+            specification: "specificationObjectId",
+            nextQuestion: "nextQuestionObjectId"
+          }
+        ],
+        isFirst: false
+      },
+      StartSessionResponse: {
+        type: 'object',
+        properties: {
+        sessionId: { type: 'string' },
+        question: { $ref: '#/components/schemas/CreateQuestionRequest' }
+        }
+      },
+      AnswerQuestionRequest: {
+        sessionId: "sessionObjectId",
+        optionValue: "value"
       },
     },
   },

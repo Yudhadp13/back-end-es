@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import * as Yup from "yup";
 
+export const SPECIFICATION_MODEL_NAME = "Specification";
+
 const Schema = mongoose.Schema;
 
 export const specificationDAO = Yup.object({
@@ -23,6 +25,6 @@ const specificationSchema = new Schema<Specification>({
     timestamps: true,
 });
 
-const SpecificationModel = mongoose.model("Specification", specificationSchema);
+const SpecificationModel = mongoose.model(SPECIFICATION_MODEL_NAME, specificationSchema);
 
 export default SpecificationModel;

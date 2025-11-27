@@ -10,6 +10,9 @@ import specificationController from "../controllers/specification.controller";
 import materialController from "../controllers/material.controller";
 import platformController from "../controllers/platform.controller";
 import bannerController from "../controllers/banner.controller";
+import ruleController from "../controllers/rule.controller";
+import questionController from "../controllers/question.controller";
+import consultationController from "../controllers/consultation.controller";
 
 const router = express.Router();
 
@@ -59,6 +62,41 @@ router.post(
     required: true,
     schema: {
       $ref: "#/components/schemas/ActivationRequest"
+    }
+  }
+  */
+);
+
+router.put(
+  "/auth/update-profile",
+  [authMiddleware, aclMiddleware([ROLES.MEMBER])],
+  authController.updateProfile
+  /*
+  #swagger.tags = ['Auth']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    required: true,
+    schema: {
+      $ref: "#/components/schemas/UpdateProfileRequest"
+    }
+  }
+  */
+);
+router.put(
+  "/auth/update-password",
+  [authMiddleware, aclMiddleware([ROLES.MEMBER])],
+  authController.updatePassword
+  /*
+  #swagger.tags = ['Auth']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    required: true,
+    schema: {
+      $ref: "#/components/schemas/UpdatePasswordRequest"
     }
   }
   */
@@ -346,6 +384,135 @@ router.get(
 );
 
 router.post(
+  "/questions",
+  [authMiddleware, aclMiddleware([ROLES.ADMIN])],
+  questionController.create
+  /*
+  #swagger.tags = ['Questions']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    required: true,
+    schema: {
+      $ref: "#/components/schemas/CreateQuestionRequest"
+    }
+  }
+  */
+);
+
+router.get(
+  "/questions",
+  questionController.findAll
+  /*
+  #swagger.tags = ['Questions']
+  */
+);
+
+router.get(
+  "/questions/:id",
+  questionController.findOne
+  /*
+  #swagger.tags = ['Questions']
+  */
+);
+
+router.put(
+  "/questions/:id",
+  [authMiddleware, aclMiddleware([ROLES.ADMIN])],
+  questionController.update
+  /*
+  #swagger.tags = ['Questions']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    required: true,
+    schema: {
+      $ref: "#/components/schemas/CreateQuestionRequest"
+    }
+  }
+  */
+);
+
+router.delete(
+  "/questions/:id",
+  [authMiddleware, aclMiddleware([ROLES.ADMIN])],
+  questionController.remove
+  /*
+  #swagger.tags = ['Questions']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  */
+);
+
+router.post(
+  "/rules",
+  [authMiddleware, aclMiddleware([ROLES.ADMIN])],
+  ruleController.create
+  /*
+  #swagger.tags = ['Rules']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    required: true,
+    schema: {
+      $ref: "#/components/schemas/CreateRuleRequest"
+    }
+  }
+  */
+);
+
+router.get(
+  "/rules",
+  ruleController.findAll
+  /*
+  #swagger.tags = ['Rules']
+  */
+);
+
+router.get(
+  "/rules/:id",
+  ruleController.findOne
+  /*
+  #swagger.tags = ['Rules']
+  */
+);
+
+router.put(
+  "/rules/:id",
+  [authMiddleware, aclMiddleware([ROLES.ADMIN])],
+  ruleController.update
+  /*
+  #swagger.tags = ['Rules']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    required: true,
+    schema: {
+      $ref: "#/components/schemas/CreateRuleRequest"
+    }
+  }
+  */
+);
+
+router.delete(
+  "/rules/:id",
+  [authMiddleware, aclMiddleware([ROLES.ADMIN])],
+  ruleController.remove
+  /*
+  #swagger.tags = ['Rules']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  */
+);
+
+
+router.post(
   "/specification",
   [authMiddleware, aclMiddleware([ROLES.ADMIN])],
   specificationController.create
@@ -403,6 +570,49 @@ router.delete(
     "bearerAuth": {}
   }]
   */
+);
+
+router.post(
+"/consultation/start",
+[authMiddleware],
+consultationController.start
+/*
+#swagger.tags = ['Consultation']
+#swagger.security = [{"bearerAuth": {}}]
+#swagger.responses[200] = {
+schema: {
+$ref: "#/components/schemas/StartSessionResponse"
+}
+}
+*/
+);
+
+
+router.post(
+"/consultation/answer",
+[authMiddleware],
+consultationController.answer
+/*
+#swagger.tags = ['Consultation']
+#swagger.security = [{"bearerAuth": {}}]
+#swagger.requestBody = {
+required: true,
+schema: {
+$ref: "#/components/schemas/AnswerQuestionRequest"
+}
+}
+*/
+);
+
+
+router.get(
+"/consultation",
+[authMiddleware],
+consultationController.history
+/*
+#swagger.tags = ['Consultation']
+#swagger.security = [{"bearerAuth": {}}]
+*/
 );
 
 router.post(
