@@ -262,6 +262,10 @@ router.get(
     in: 'query',
     type: 'boolean'
   }
+    #swagger.parameters['isSuperior'] = {
+    in: 'query',
+    type: 'boolean'
+  }
   #swagger.parameters['characteristics'] = {
     in: 'query',
     type: 'array',

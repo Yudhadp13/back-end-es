@@ -574,6 +574,13 @@
             }
           },
           {
+            "name": "isSuperior",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
             "name": "characteristics",
             "in": "query",
             "collectionFormat": "multi",
@@ -1711,6 +1718,10 @@
             }
           },
           "isPublish": {
+            "type": "boolean",
+            "example": false
+          },
+          "isSuperior": {
             "type": "boolean",
             "example": false
           }

@@ -10,6 +10,7 @@ export const materialDTO = Yup.object({
   description: Yup.string().required(),
   banner: Yup.string().required(),
   isPublish: Yup.boolean(),
+  isSuperior: Yup.boolean(),
   category: Yup.string().required(),
   slug: Yup.string(),
   createdBy: Yup.string().required(),
@@ -46,6 +47,10 @@ const MaterialSchema = new Schema<Material>(
       ref: "Category",
     },
     isPublish: {
+      type: Schema.Types.Boolean,
+      default: false,
+    },
+    isSuperior: {
       type: Schema.Types.Boolean,
       default: false,
     },

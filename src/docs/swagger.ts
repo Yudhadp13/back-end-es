@@ -66,6 +66,7 @@ const doc = {
           "specificationObjectId",
         ],
         isPublish: false,
+        isSuperior: false,
       },
       RemoveMediaRequest: {
         fileUrl: "",

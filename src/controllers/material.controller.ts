@@ -24,6 +24,7 @@ export default {
         if (filter.search) query.$text = { $search: filter.search };
         if (filter.category) query.category = filter.category;
         if (filter.isPublish) query.isPublish = filter.isPublish;
+        if (filter.isSuperior) query.isSuperior = filter.isSuperior;
         if (filter.characteristics) query.characteristics = { $in: filter.characteristics };
 
         return query;
@@ -35,6 +36,7 @@ export default {
         search,
         category,
         isPublish,
+        isSuperior,
         characteristics,
       } = req.query;
 
@@ -42,6 +44,7 @@ export default {
         search,
         category,
         isPublish,
+        isSuperior,
         characteristics,
       });
 
