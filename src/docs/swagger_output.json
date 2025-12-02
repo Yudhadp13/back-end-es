@@ -1260,6 +1260,28 @@
         }
       }
     },
+    "/specification-search": {
+      "get": {
+        "tags": [
+          "Specification"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/specification/{id}": {
       "get": {
         "tags": [

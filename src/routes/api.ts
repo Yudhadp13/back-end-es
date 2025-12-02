@@ -541,6 +541,13 @@ router.get(
   */
 );
 router.get(
+  "/specification-search",
+  specificationController.findByName
+  /*
+  #swagger.tags = ['Specification']
+  */
+);
+router.get(
   "/specification/:id",
   specificationController.findOne
   /*

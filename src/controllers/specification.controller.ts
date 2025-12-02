@@ -51,6 +51,15 @@ export default{
             response.error(res, error, "failed find all specification");
         }
     },
+    async findByName(req: IReqUser, res: Response) {
+        try {
+            const { name } = req.query;
+            const result = await SpecificationModel.findByName(`${name}`);
+            response.success(res, result, "success get specification by code name");
+        } catch (error) {
+            response.error(res, error, "failed to get specification by code name");
+        }
+    },
     async findOne(req: IReqUser, res: Response) {
         try {
             const { id } = req.params;

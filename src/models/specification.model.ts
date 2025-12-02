@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Model } from "mongoose";
 import * as Yup from "yup";
 
 export const SPECIFICATION_MODEL_NAME = "Specification";
@@ -12,19 +12,54 @@ export const specificationDAO = Yup.object({
 
 export type Specification = Yup.InferType<typeof specificationDAO>;
 
-const specificationSchema = new Schema<Specification>({
-    name: {
-        type: Schema.Types.String,
-        required: true,
-    },
-    description: {
-        type: Schema.Types.String,
-        required: true,
-    },
-}, {
-    timestamps: true,
-});
+/**
+ * Tambahkan interface untuk static method
+ */
+interface SpecificationModelType extends Model<Specification> {
+    findByName(name: string): Promise<Specification | null>;
+}
 
-const SpecificationModel = mongoose.model(SPECIFICATION_MODEL_NAME, specificationSchema);
+const specificationSchema = new Schema<Specification, SpecificationModelType>(
+    {
+        name: {
+            type: Schema.Types.String,
+            required: true,
+        },
+        description: {
+            type: Schema.Types.String,
+            required: true,
+        },
+    },
+    {
+        timestamps: true,
+    }
+);
+
+/**
+ * STATIC METHOD
+ * Mirip seperti findByCity pada contoh kamu,
+ * tapi disesuaikan dengan struktur data Specification.
+ */
+specificationSchema.statics.findByName = function (name: string) {
+    return this.aggregate([
+        {
+            $match: {
+                name: { $regex: name, $options: "i" }, // regex search
+            },
+        },
+        {
+            $project: {
+                _id: 1,
+                name: 1,
+                description: 1,
+            },
+        },
+    ]);
+};
+
+const SpecificationModel = mongoose.model<
+    Specification,
+    SpecificationModelType
+>(SPECIFICATION_MODEL_NAME, specificationSchema);
 
 export default SpecificationModel;
