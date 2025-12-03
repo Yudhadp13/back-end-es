@@ -81,7 +81,6 @@ const doc = {
         name: "Material A Platform",
         description: "Material A Platform - Description",
         url: "Link Url Platform",
-        icon: "",
         materials: "materialObjectId",
       },
       CreateRuleRequest: {

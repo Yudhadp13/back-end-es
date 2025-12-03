@@ -1799,10 +1799,6 @@
             "type": "string",
             "example": "Link Url Platform"
           },
-          "icon": {
-            "type": "string",
-            "example": ""
-          },
           "materials": {
             "type": "string",
             "example": "materialObjectId"

@@ -8,7 +8,6 @@ export const platformDTO = Yup.object({
   name: Yup.string().required(),
   description: Yup.string().required(),
   url: Yup.string().url().required(),
-  icon: Yup.string().required(),
   materials: Yup.string().required(),
 });
 
@@ -29,10 +28,6 @@ const PlatformSchema = new Schema<Platform>(
       required: true,
     },
     url: {
-      type: Schema.Types.String,
-      required: true,
-    },
-    icon: {
       type: Schema.Types.String,
       required: true,
     },
