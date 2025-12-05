@@ -20,18 +20,22 @@ export default {
     try {
       const { page = 1, limit = 50, search } = req.query as unknown as IPaginationQuery;
 
-      const query: FilterQuery<TypePlatform> = {};
+      const query = {};
 
-      if (search) {
-        Object.assign(query, {
-          ...query,
-          $text: {
-            $search: search,
-          },
-        });
-      }
+            if (search) {
+                Object.assign(query, {
+                    $or: [
+                        {
+                            name: {$regex: search, $options: "i"},
+                        },
+                        {
+                            description: {$regex: search, $options: "i"},
+                        },
+                    ],
+                });
+            }
 
-      const result = await QuestionModel.find()
+      const result = await QuestionModel.find(query)
         .populate("options.specification")
         .populate("options.nextQuestion")
         .limit(limit)
@@ -39,7 +43,7 @@ export default {
         .sort({ createdAt: -1 })
         .exec();
 
-      const count = await QuestionModel.countDocuments();
+      const count = await QuestionModel.countDocuments(query);
 
       response.pagination(
         res,
