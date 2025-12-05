@@ -31,7 +31,7 @@ export default {
       };
 
       const {
-        limit = 10,
+        limit = 50,
         page = 1,
         search,
         category,
