@@ -2,7 +2,7 @@ import { Response } from "express";
 import { IPaginationQuery, IReqUser } from "../utils/interfaces";
 import response from "../utils/response";
 import RuleModel, { ruleDTO } from "../models/rule.model";
-import { FilterQuery, isValidObjectId } from "mongoose";
+import mongoose, { FilterQuery, isValidObjectId } from "mongoose";
 import { TypePlatform } from "../models/platform.model";
 
 export default {
@@ -20,28 +20,33 @@ export default {
     try {
       const { page = 1, limit = 50, search } = req.query as unknown as IPaginationQuery;
 
-      const query = {};
+      const query: any = {};
 
-            if (search) {
-                Object.assign(query, {
-                    $or: [
-                        {
-                            name: {$regex: search, $options: "i"},
-                        },
-                        {
-                            description: {$regex: search, $options: "i"},
-                        },
-                    ],
-                });
-            }
+      if (search) {
+        
+        const regex = new RegExp(search, "i");
+
+        const specMatches = await mongoose.model("Specification")
+          .find({ name: regex })
+          .select("_id");
+
+        const materialMatches = await mongoose.model("Material")
+          .find({ name: regex })
+          .select("_id");
+
+        query.$or = [
+          { name: { $regex: regex } },
+          { conditions: { $in: specMatches } },
+          { result: { $in: materialMatches } },
+        ];
+      }
 
       const result = await RuleModel.find(query)
         .populate("conditions")
         .populate("result")
         .limit(limit)
         .skip((page - 1) * limit)
-        .sort({ createdAt: -1 })
-        .exec();
+        .sort({ createdAt: -1 });
 
       const count = await RuleModel.countDocuments(query);
 

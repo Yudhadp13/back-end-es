@@ -2,7 +2,7 @@ import { Response } from "express";
 import { IPaginationQuery, IReqUser } from "../utils/interfaces";
 import response from "../utils/response";
 import QuestionModel, { questionDTO } from "../models/question.model";
-import { FilterQuery, isValidObjectId } from "mongoose";
+import mongoose, { FilterQuery, isValidObjectId } from "mongoose";
 import { TypePlatform } from "../models/platform.model";
 
 export default {
@@ -20,20 +20,23 @@ export default {
     try {
       const { page = 1, limit = 50, search } = req.query as unknown as IPaginationQuery;
 
-      const query = {};
+      const query: any = {};
 
-            if (search) {
-                Object.assign(query, {
-                    $or: [
-                        {
-                            name: {$regex: search, $options: "i"},
-                        },
-                        {
-                            description: {$regex: search, $options: "i"},
-                        },
-                    ],
-                });
-            }
+      if (search) {
+        const regex = new RegExp(search, "i");
+
+        const specMatches = await mongoose.model("Specification")
+          .find({ name: regex })
+          .select("_id");
+
+        query.$or = [
+          { code: { $regex: regex } },
+          { questionText: { $regex: regex } },
+          { "options.label": { $regex: regex } },
+          { "options.value": { $regex: regex } },
+          { "options.specification": { $in: specMatches } },
+        ];
+      }
 
       const result = await QuestionModel.find(query)
         .populate("options.specification")
