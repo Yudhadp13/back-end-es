@@ -2,7 +2,8 @@ import { Response } from "express";
 import { IPaginationQuery, IReqUser } from "../utils/interfaces";
 import response from "../utils/response";
 import RuleModel, { ruleDTO } from "../models/rule.model";
-import { isValidObjectId } from "mongoose";
+import { FilterQuery, isValidObjectId } from "mongoose";
+import { TypePlatform } from "../models/platform.model";
 
 export default {
   async create(req: IReqUser, res: Response) {
@@ -17,7 +18,18 @@ export default {
 
   async findAll(req: IReqUser, res: Response) {
     try {
-      const { page = 1, limit = 10 } = req.query as unknown as IPaginationQuery;
+      const { page = 1, limit = 50, search } = req.query as unknown as IPaginationQuery;
+
+      const query: FilterQuery<TypePlatform> = {};
+
+      if (search) {
+        Object.assign(query, {
+          ...query,
+          $text: {
+            $search: search,
+          },
+        });
+      }
 
       const result = await RuleModel.find()
         .populate("conditions")
