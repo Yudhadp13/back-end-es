@@ -16,40 +16,63 @@ export default {
     }
   },
 
-  async findAll(req: IReqUser, res: Response) {
-    try {
-      const { page = 1, limit = 50, search } = req.query as unknown as IPaginationQuery;
+async findAll(req: IReqUser, res: Response) {
+  try {
+    const { page = 1, limit = 50, search } = req.query as unknown as IPaginationQuery;
 
-      const query: FilterQuery<TypePlatform> = {};
+    const pipeline: any[] = [];
 
-      if (search) {
-        query.$text = { $search: search };
+    pipeline.push({
+      $lookup: {
+        from: "specifications",
+        localField: "options.specification",
+        foreignField: "_id",
+        as: "specs"
       }
+    });
 
-      const result = await QuestionModel.find(query)
-        .populate("options.specification")
-        .populate("options.nextQuestion")
-        .limit(limit)
-        .skip((page - 1) * limit)
-        .sort({ createdAt: -1 })
-        .exec();
+    if (search) {
+      const regex = new RegExp(search, "i");
 
-      const count = await QuestionModel.countDocuments(query);
-
-      response.pagination(
-        res,
-        result,
-        {
-          total: count,
-          totalPages: Math.ceil(count / limit),
-          current: page,
+      pipeline.push({
+        $match: {
+          $or: [
+            { code: { $regex: regex } },
+            { questionText: { $regex: regex } },
+            { "options.label": { $regex: regex } },
+            { "options.value": { $regex: regex } },
+            { "specs.name": { $regex: regex } },
+          ],
         },
-        "success find all questions"
-      );
-    } catch (error) {
-      response.error(res, error, "failed find all questions");
+      });
     }
-  },
+
+    const totalPipeline = [...pipeline, { $count: "total" }];
+    const totalResult = await QuestionModel.aggregate(totalPipeline);
+    const total = totalResult[0]?.total || 0;
+
+    pipeline.push({ $sort: { createdAt: -1 } });
+    pipeline.push({ $skip: (page - 1) * limit });
+    pipeline.push({ $limit: limit });
+
+    const result = await QuestionModel.aggregate(pipeline);
+
+    response.pagination(
+      res,
+      result,
+      {
+        total,
+        totalPages: Math.ceil(total / limit),
+        current: page,
+      },
+      "success find all questions"
+    );
+
+  } catch (error) {
+    response.error(res, error, "failed find all questions");
+  }
+}
+,
 
   async findOne(req: IReqUser, res: Response) {
     try {
