@@ -20,23 +20,11 @@ export default {
     try {
       const { page = 1, limit = 50, search } = req.query as unknown as IPaginationQuery;
 
-      const query = {};
+      const query: FilterQuery<TypePlatform> = {};
 
-            if (search) {
-                Object.assign(query, {
-                    $or: [
-                        {
-                            name: {$regex: search, $options: "i"},
-                        },
-                        {
-                            conditions: {$regex: search, $options: "i"},
-                        },
-                        {
-                           result: {$regex: search, $options: "i"},
-                        },
-                    ],
-                });
-            }
+      if (search) {
+        query.$text = { $search: search };
+      }
 
       const result = await RuleModel.find(query)
         .populate("conditions")

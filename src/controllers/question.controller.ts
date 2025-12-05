@@ -20,23 +20,11 @@ export default {
     try {
       const { page = 1, limit = 50, search } = req.query as unknown as IPaginationQuery;
 
-      const query = {};
+      const query: FilterQuery<TypePlatform> = {};
 
-            if (search) {
-                Object.assign(query, {
-                    $or: [
-                        {
-                            code: {$regex: search, $options: "i"},
-                        },
-                        {
-                            questionText: {$regex: search, $options: "i"},
-                        },
-                        {
-                            options: {$regex: search, $options: "i"},
-                        },
-                    ],
-                });
-            }
+      if (search) {
+        query.$text = { $search: search };
+      }
 
       const result = await QuestionModel.find(query)
         .populate("options.specification")
