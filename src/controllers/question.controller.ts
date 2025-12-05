@@ -26,10 +26,13 @@ export default {
                 Object.assign(query, {
                     $or: [
                         {
-                            name: {$regex: search, $options: "i"},
+                            code: {$regex: search, $options: "i"},
                         },
                         {
-                            description: {$regex: search, $options: "i"},
+                            questionText: {$regex: search, $options: "i"},
+                        },
+                        {
+                            options: {$regex: search, $options: "i"},
                         },
                     ],
                 });

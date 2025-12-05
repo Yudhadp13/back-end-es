@@ -29,7 +29,10 @@ export default {
                             name: {$regex: search, $options: "i"},
                         },
                         {
-                            description: {$regex: search, $options: "i"},
+                            conditions: {$regex: search, $options: "i"},
+                        },
+                        {
+                           result: {$regex: search, $options: "i"},
                         },
                     ],
                 });
