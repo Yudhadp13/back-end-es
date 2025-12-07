@@ -63,7 +63,7 @@ export default {
         return response.notFound(res, "failed find one a platform");
       }
 
-      const result = await PlatformModel.findById(id);
+      const result = await PlatformModel.findById(id).populate("materials");
 
       if (!result) {
         return response.notFound(res, "failed find one a platform");

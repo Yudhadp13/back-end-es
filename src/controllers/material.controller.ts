@@ -53,6 +53,7 @@ export default {
         .skip((+page - 1) * +limit)
         .sort({ createdAt: -1 })
         .populate("characteristics")
+        .populate("category")
         .lean()
         .exec();
       const count = await MaterialModel.countDocuments(query);
@@ -79,7 +80,7 @@ export default {
         return response.notFound(res, "material not found");
       }
 
-      const result = await MaterialModel.findById(id).populate("characteristics");
+      const result = await MaterialModel.findById(id).populate("characteristics").populate("category");
 
       if (!result) {
         return response.notFound(res, "material not found");
@@ -123,7 +124,7 @@ export default {
   async findOneBySlug(req: IReqUser, res: Response) {
     try {
       const { slug } = req.params;
-       const result = await MaterialModel.findOne({ slug }).populate("characteristics");
+       const result = await MaterialModel.findOne({ slug }).populate("characteristics").populate("category");
 
       if (!result) return response.notFound(res, "material not found");
 
