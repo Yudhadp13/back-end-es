@@ -615,6 +615,7 @@ $ref: "#/components/schemas/AnswerQuestionRequest"
 */
 );
 
+router.get("/consultation/:id", consultationController.detail);
 
 router.get(
 "/consultation",

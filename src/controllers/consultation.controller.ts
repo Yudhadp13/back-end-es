@@ -27,6 +27,23 @@ export default {
     }
   },
 
+  async detail(req: IReqUser, res: Response) {
+  try {
+    const SessionModel = (await import("../models/session.model")).default;
+
+    const result = await SessionModel.findOne({
+      _id: req.params.id,
+      user: req.user?.id,
+    }).populate("currentQuestion");
+
+    if (!result) throw new Error("Session not found");
+
+    response.success(res, result, "session detail");
+  } catch (error) {
+    response.error(res, error, "failed get session detail");
+  }
+},
+
   async history(req: IReqUser, res: Response) {
   try {
     const { page = 1, limit = 10 } = req.query as unknown as IPaginationQuery;
