@@ -28,27 +28,50 @@ export default {
   },
 
   async detail(req: IReqUser, res: Response) {
-  try {
-    const SessionModel = (await import("../models/session.model")).default;
+    try {
+      const SessionModel = (await import("../models/session.model")).default;
+      const PlatformModel = (await import("../models/platform.model")).default;
 
-    const result = await SessionModel.findOne({
-      _id: req.params.id,
-      user: req.user?.id,
-    }).populate({
-        path: "currentQuestion",
-        populate: [
-          { path: "options.specification" },
-          { path: "options.nextQuestion" }
-        ]
-      }).populate("result");
+      const session = await SessionModel.findOne({
+        _id: req.params.id,
+        user: req.user?.id,
+      })
+        // populate current question + detail hubungan antar options
+        .populate({
+          path: "currentQuestion",
+          populate: [
+            { path: "options.specification" },
+            { path: "options.nextQuestion" }
+          ]
+        })
+        // populate result material
+        .populate("result")
+        // wajib! supaya riwayat bisa ditampilkan di FE
+        .populate("questionHistory.question");
 
-    if (!result) throw new Error("Session not found");
+      if (!session) throw new Error("Session not found");
 
-    response.success(res, result, "session detail");
-  } catch (error) {
-    response.error(res, error, "failed get session detail");
-  }
-},
+      // cari platform material
+      let platforms: any[] = [];
+      if (session.result) {
+        platforms = await PlatformModel.find({
+          materials: session.result._id,
+        });
+      }
+
+      // kirim session + platforms (FE memerlukan ini)
+      response.success(
+        res,
+        {
+          ...session.toObject(),
+          platforms,
+        },
+        "session detail"
+      );
+    } catch (error) {
+      response.error(res, error, "failed get session detail");
+    }
+  },
 
   async history(req: IReqUser, res: Response) {
   try {
