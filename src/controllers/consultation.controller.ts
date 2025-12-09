@@ -27,51 +27,90 @@ export default {
     }
   },
 
-  async detail(req: IReqUser, res: Response) {
-    try {
-      const SessionModel = (await import("../models/session.model")).default;
-      const PlatformModel = (await import("../models/platform.model")).default;
+async detail(req: IReqUser, res: Response) {
+  try {
+    const SessionModel = (await import("../models/session.model")).default;
+    const PlatformModel = (await import("../models/platform.model")).default;
+    const MaterialModel = (await import("../models/material.model")).default;
+    const QuestionModel = (await import("../models/question.model")).default;
 
-      const session = await SessionModel.findOne({
-        _id: req.params.id,
-        user: req.user?.id,
-      })
-        // populate current question + detail hubungan antar options
-        .populate({
-          path: "currentQuestion",
-          populate: [
-            { path: "options.specification" },
-            { path: "options.nextQuestion" }
-          ]
-        })
-        // populate result material
-        .populate("result")
-        // wajib! supaya riwayat bisa ditampilkan di FE
-        .populate("questionHistory.question");
+    // Ambil session sebagai plain object (lean) supaya mudah dimanipulasi tanpa konflik tipe ObjectId
+    const session = await SessionModel.findOne({
+      _id: req.params.id,
+      user: req.user?.id,
+    }).lean();
 
-      if (!session) throw new Error("Session not found");
+    if (!session) throw new Error("Session not found");
 
-      // cari platform material
-      let platforms: any[] = [];
-      if (session.result) {
-        platforms = await PlatformModel.find({
-          materials: session.result._id,
+    // === ambil currentQuestion detail jika ada ===
+    let currentQuestionDetail: any = null;
+    if (session.currentQuestion) {
+      currentQuestionDetail = await QuestionModel.findById(
+        session.currentQuestion
+      )
+        .populate("options.specification")
+        .populate("options.nextQuestion")
+        .lean();
+    }
+
+    // === ambil material result (object) jika ada ===
+    let materialDetail: any = null;
+    if (session.result) {
+      // session.result bisa berisi ObjectId atau Object tergantung bagaimana disimpan
+      const materialId =
+        typeof session.result === "string" ? session.result : session.result._id;
+      if (materialId) {
+        materialDetail = await MaterialModel.findById(materialId).lean();
+      }
+    }
+
+    // === ambil platforms berdasarkan material (jika ada) ===
+    let platforms: any[] = [];
+    if (materialDetail && materialDetail._id) {
+      platforms = await PlatformModel.find({
+        materials: materialDetail._id,
+      }).lean();
+    }
+
+    // === populate questionHistory.question (jika perlu) ===
+    // karena kita sudah ambil session sebagai lean, lakukan manual populate untuk history
+    let populatedQuestionHistory: any[] = [];
+    if (Array.isArray(session.questionHistory) && session.questionHistory.length) {
+      const ids = session.questionHistory
+        .map((h: any) => (h.question ? (typeof h.question === "string" ? h.question : h.question._id) : null))
+        .filter(Boolean);
+
+      const questionsMap: Record<string, any> = {};
+      if (ids.length) {
+        const questions = await QuestionModel.find({ _id: { $in: ids } })
+          .lean()
+          .select("_id code questionText options");
+        questions.forEach((q: any) => {
+          questionsMap[String(q._id)] = q;
         });
       }
 
-      // kirim session + platforms (FE memerlukan ini)
-      response.success(
-        res,
-        {
-          ...session.toObject(),
-          platforms,
-        },
-        "session detail"
-      );
-    } catch (error) {
-      response.error(res, error, "failed get session detail");
+      populatedQuestionHistory = session.questionHistory.map((h: any) => ({
+        question: h.question ? questionsMap[String(h.question)] ?? h.question : null,
+        optionLabel: h.optionLabel,
+        optionValue: h.optionValue,
+      }));
     }
-  },
+
+    // === susun payload yang dikembalikan ke FE (tidak menimpa session.currentQuestion yang semula ObjectId) ===
+    const payload = {
+      ...session,
+      currentQuestion: currentQuestionDetail, // object penuh (bukan ObjectId)
+      result: materialDetail ?? null,
+      platforms,
+      questionHistory: populatedQuestionHistory,
+    };
+
+    response.success(res, payload, "session detail");
+  } catch (error) {
+    response.error(res, error, "failed get session detail");
+  }
+},
 
   async history(req: IReqUser, res: Response) {
   try {
