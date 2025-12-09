@@ -34,7 +34,13 @@ export default {
     const result = await SessionModel.findOne({
       _id: req.params.id,
       user: req.user?.id,
-    }).populate("currentQuestion");
+    }).populate({
+        path: "currentQuestion",
+        populate: [
+          { path: "options.specification" },
+          { path: "options.nextQuestion" }
+        ]
+      }).populate("result");
 
     if (!result) throw new Error("Session not found");
 
