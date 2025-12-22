@@ -13,6 +13,7 @@ import bannerController from "../controllers/banner.controller";
 import ruleController from "../controllers/rule.controller";
 import questionController from "../controllers/question.controller";
 import consultationController from "../controllers/consultation.controller";
+import adminDashboardController from "../controllers/adminDashboard.controller";
 
 const router = express.Router();
 
@@ -100,6 +101,16 @@ router.put(
     }
   }
   */
+);
+
+router.get(
+  "/admin/dashboard/consultation-statistics",
+  [authMiddleware, aclMiddleware([ROLES.ADMIN])],
+  adminDashboardController.consultationStatistics
+  /*
+#swagger.tags = ['Admin Dashboard']
+#swagger.security = [{"bearerAuth": {}}]
+*/
 );
 
 router.post(

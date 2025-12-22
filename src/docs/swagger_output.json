@@ -184,6 +184,24 @@
         }
       }
     },
+    "/admin/dashboard/consultation-statistics": {
+      "get": {
+        "tags": [
+          "Admin Dashboard"
+        ],
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": {}
+          }
+        ]
+      }
+    },
     "/banners": {
       "post": {
         "tags": [
@@ -945,7 +963,7 @@
               "type": "string"
             }
           },
-                    {
+          {
             "name": "search",
             "in": "query",
             "schema": {
@@ -1102,7 +1120,7 @@
               "type": "string"
             }
           },
-                    {
+          {
             "name": "search",
             "in": "query",
             "schema": {
@@ -1445,6 +1463,26 @@
                 "$ref": "#/components/schemas/AnswerQuestionRequest"
               }
             }
+          }
+        }
+      }
+    },
+    "/consultation/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
           }
         }
       }

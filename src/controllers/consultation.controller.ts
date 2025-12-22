@@ -34,7 +34,7 @@ async detail(req: IReqUser, res: Response) {
     const MaterialModel = (await import("../models/material.model")).default;
     const QuestionModel = (await import("../models/question.model")).default;
 
-    // Ambil session sebagai plain object (lean) supaya mudah dimanipulasi tanpa konflik tipe ObjectId
+    // Ambil session
     const session = await SessionModel.findOne({
       _id: req.params.id,
       user: req.user?.id,
@@ -42,7 +42,7 @@ async detail(req: IReqUser, res: Response) {
 
     if (!session) throw new Error("Session not found");
 
-    // === ambil currentQuestion detail jika ada ===
+    // ambil currentQuestion detail kalo ada
     let currentQuestionDetail: any = null;
     if (session.currentQuestion) {
       currentQuestionDetail = await QuestionModel.findById(
@@ -53,10 +53,10 @@ async detail(req: IReqUser, res: Response) {
         .lean();
     }
 
-    // === ambil material result (object) jika ada ===
+    // ambil material result kalo ada
     let materialDetail: any = null;
     if (session.result) {
-      // session.result bisa berisi ObjectId atau Object tergantung bagaimana disimpan
+      // session.result
       const materialId =
         typeof session.result === "string" ? session.result : session.result._id;
       if (materialId) {
@@ -64,7 +64,7 @@ async detail(req: IReqUser, res: Response) {
       }
     }
 
-    // === ambil platforms berdasarkan material (jika ada) ===
+    // ngambil platform by material kalo ada
     let platforms: any[] = [];
     if (materialDetail && materialDetail._id) {
       platforms = await PlatformModel.find({
@@ -72,8 +72,7 @@ async detail(req: IReqUser, res: Response) {
       }).lean();
     }
 
-    // === populate questionHistory.question (jika perlu) ===
-    // karena kita sudah ambil session sebagai lean, lakukan manual populate untuk history
+    // ambil session sebelumnya buat history user
     let populatedQuestionHistory: any[] = [];
     if (Array.isArray(session.questionHistory) && session.questionHistory.length) {
       const ids = session.questionHistory
@@ -97,10 +96,10 @@ async detail(req: IReqUser, res: Response) {
       }));
     }
 
-    // === susun payload yang dikembalikan ke FE (tidak menimpa session.currentQuestion yang semula ObjectId) ===
+    // ambik payload buat fe
     const payload = {
       ...session,
-      currentQuestion: currentQuestionDetail, // object penuh (bukan ObjectId)
+      currentQuestion: currentQuestionDetail,
       result: materialDetail ?? null,
       platforms,
       questionHistory: populatedQuestionHistory,

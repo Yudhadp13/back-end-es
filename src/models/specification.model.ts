@@ -12,9 +12,6 @@ export const specificationDAO = Yup.object({
 
 export type Specification = Yup.InferType<typeof specificationDAO>;
 
-/**
- * Tambahkan interface untuk static method
- */
 interface SpecificationModelType extends Model<Specification> {
     findByName(name: string): Promise<Specification | null>;
 }
@@ -35,11 +32,6 @@ const specificationSchema = new Schema<Specification, SpecificationModelType>(
     }
 );
 
-/**
- * STATIC METHOD
- * Mirip seperti findByCity pada contoh kamu,
- * tapi disesuaikan dengan struktur data Specification.
- */
 specificationSchema.statics.findByName = function (name: string) {
     return this.aggregate([
         {

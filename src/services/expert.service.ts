@@ -39,7 +39,7 @@ export default {
     const selected = question.options.find((opt) => opt.value === optionValue);
     if (!selected) throw new Error("Option not found");
 
-    // === simpan specification sebagai fakta ===
+    // simpan spesifikasi sebagai fakta
     if (selected.specification) {
       const specId = selected.specification.toString();
       const exists = session.answers.some(a => a.toString() === specId);
@@ -48,14 +48,14 @@ export default {
       }
     }
 
-    // simpan histori jawaban
+    // simpan history jawaban
     session.questionHistory.push({
       question: question._id,
       optionLabel: selected.label,
       optionValue: selected.value,
     });
 
-    // === EVALUASI RULE (FORWARD CHAINING) ===
+    // eval rule dengan forward chaining
     const rules = await RuleModel.find();
 
     let matchedRule = null;
@@ -71,7 +71,7 @@ export default {
       }
     }
 
-    // ===== JIKA RULE TERPENUHI =====
+    // kondisi kalo ada rule yang terpenuhi
     if (matchedRule) {
       const material = await MaterialModel.findById(matchedRule.result);
       const platforms = await PlatformModel.find({ materials: material?._id });
@@ -87,7 +87,7 @@ export default {
       };
     }
 
-    // === MASIH ADA PERTANYAAN LANJUTAN ===
+    // kalo masih ada pertanyaan lanjutan
     if (selected.nextQuestion) {
       session.currentQuestion = selected.nextQuestion as any;
       await session.save();
@@ -100,7 +100,7 @@ export default {
       };
     }
 
-    // === TIDAK ADA NEXT QUESTION & NO RULE MATCHED ===
+    // semisal gaada pertanyaan lagi dan rule blm ada yang match
     session.status = SESSION_STATUS.FINISHED;
     await session.save();
 

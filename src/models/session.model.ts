@@ -18,7 +18,7 @@ interface QuestionHistory {
 
 interface Session {
   user: Types.ObjectId;
-  answers: Types.ObjectId[]; // specification ids
+  answers: Types.ObjectId[]; 
   currentQuestion: Types.ObjectId | null;
   result: Types.ObjectId | null;
   status: SESSION_STATUS;
