@@ -113,6 +113,17 @@ router.get(
 */
 );
 
+router.get(
+  "/admin/dashboard/top-materials",
+  [authMiddleware, aclMiddleware([ROLES.ADMIN])],
+  adminDashboardController.topMaterials
+    /*
+    #swagger.tags = ['Admin Dashboard']
+    #swagger.security = [{"bearerAuth": {}}]
+    */
+);
+
+
 router.post(
   "/banners",
   [authMiddleware, aclMiddleware([ROLES.ADMIN])],

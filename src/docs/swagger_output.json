@@ -202,6 +202,47 @@
         ]
       }
     },
+    "/admin/dashboard/top-materials": {
+      "get": {
+        "tags": [
+          "Admin Dashboard"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": {}
+          }
+        ]
+      }
+    },
     "/banners": {
       "post": {
         "tags": [

@@ -108,4 +108,76 @@ export default {
       consultationByPeriod,
     };
   },
+
+  async getTopMaterialsByPeriod({
+    period,
+    year,
+    month,
+  }: {
+    period: "daily" | "weekly" | "monthly";
+    year: number;
+    month?: number;
+  }) {
+    let match: any = {
+      status: SESSION_STATUS.FINISHED,
+      result: { $ne: null },
+    };
+
+    // ===== FILTER WAKTU =====
+    if (period === "monthly" && month) {
+      match.$expr = {
+        $and: [
+          { $eq: [{ $year: "$createdAt" }, year] },
+          { $eq: [{ $month: "$createdAt" }, month] },
+        ],
+      };
+    }
+
+    if (period === "daily") {
+      match.$expr = {
+        $eq: [{ $year: "$createdAt" }, year],
+      };
+    }
+
+    // ===== AGGREGATION =====
+    const materials = await SessionModel.aggregate([
+      { $match: match },
+      {
+        $group: {
+          _id: "$result",
+          total: { $sum: 1 },
+        },
+      },
+      { $sort: { total: -1 } },
+      { $limit: 5 },
+      {
+        $lookup: {
+          from: "materials",
+          localField: "_id",
+          foreignField: "_id",
+          as: "material",
+        },
+      },
+      { $unwind: "$material" },
+      {
+        $project: {
+          materialId: "$material._id",
+          materialName: "$material.name",
+          total: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+    return {
+      period,
+      range:
+        period === "monthly"
+          ? `${year}-${month}`
+          : `${year}`,
+      materials,
+    };
+  }
+
+
 };

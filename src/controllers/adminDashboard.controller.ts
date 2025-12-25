@@ -12,4 +12,26 @@ export default {
       response.error(res, error, "failed get dashboard consultation statistics");
     }
   },
+
+  async topMaterials(req: IReqUser, res: Response) {
+  try {
+    const {
+      period = "monthly",
+      year = new Date().getFullYear(),
+      month,
+    } = req.query;
+
+    const result =
+      await dashboardService.getTopMaterialsByPeriod({
+        period: period as any,
+        year: Number(year),
+        month: month ? Number(month) : undefined,
+      });
+
+    response.success(res, result, "top materials by period");
+  } catch (error) {
+    response.error(res, error, "failed get top materials");
+  }
+}
+
 };
