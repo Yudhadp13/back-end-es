@@ -42,7 +42,7 @@ The backend serves as the central processing layer between the frontend applicat
 | [TypeScript](https://www.typescriptlang.org/) | Static typing and maintainable code |
 | [Node.js](https://nodejs.org/) | JavaScript runtime |
 | [Express.js](https://expressjs.com/) | REST API framework |
-| Database | Persistent application data, configured through `DATABASE_URL` |
+| [MongoDB](https://www.mongodb.com/) | NoSQL database for application data |
 | [JSON Web Token](https://jwt.io/) | Token-based authentication |
 | [bcrypt](https://www.npmjs.com/package/bcrypt) | Password hashing |
 | [Swagger Autogen](https://www.npmjs.com/package/swagger-autogen) | API documentation generation |
@@ -237,7 +237,7 @@ Create a `.env` file in the project root and configure the variables required by
 
 ```env
 # Database
-DATABASE_URL=""
+DATABASE_URL="DATABASE_URL="mongodb+srv://<username>:<password>@<cluster-url>/<database-name>""
 
 # Authentication
 SECRET=""
